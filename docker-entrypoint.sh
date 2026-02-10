@@ -31,22 +31,23 @@ file_env() {
 # Set admin user credentials #
 ##############################
 
-file_env 'KEYCLOAK_ADMIN'
-file_env 'KEYCLOAK_ADMIN_PASSWORD'
+file_env 'KC_BOOTSTRAP_ADMIN_USERNAME'
+file_env 'KC_BOOTSTRAP_ADMIN_PASSWORD'
 
 ################################################
 # Set database config from Heroku DATABASE_URL #
 ################################################
-if [ "$DATABASE_URL" != "" ]; then
+DB_ARGS=""
+if [ "${DATABASE_URL:-}" != "" ]; then
   echo "Found database configuration in DATABASE_URL=$DATABASE_URL"
 
-  regex='^postgres://([a-zA-Z0-9_-]+):([a-zA-Z0-9]+)@([a-z0-9.-]+):([[:digit:]]+)/([a-zA-Z0-9_-]+)$'
+  regex='^postgres(ql)?://([a-zA-Z0-9_-]+):([a-zA-Z0-9]+)@([a-z0-9.-]+):([[:digit:]]+)/([a-zA-Z0-9_-]+)$'
   if [[ $DATABASE_URL =~ $regex ]]; then
-    DB_ADDR=${BASH_REMATCH[3]}
-    DB_PORT=${BASH_REMATCH[4]}
-    DB_DATABASE=${BASH_REMATCH[5]}
-    DB_USER=${BASH_REMATCH[1]}
-    DB_PASSWORD=${BASH_REMATCH[2]}
+    DB_ADDR=${BASH_REMATCH[4]}
+    DB_PORT=${BASH_REMATCH[5]}
+    DB_DATABASE=${BASH_REMATCH[6]}
+    DB_USER=${BASH_REMATCH[2]}
+    DB_PASSWORD=${BASH_REMATCH[3]}
 
     echo "DB_ADDR=$DB_ADDR, DB_PORT=$DB_PORT, DB_DATABASE=$DB_DATABASE, DB_USER=$DB_USER, DB_PASSWORD=$DB_PASSWORD"
 
@@ -61,7 +62,7 @@ fi
 CONFIG_ARGS=""
 RUN_CONFIG_START=false
 RUN_CONFIG=false
-SERVER_OPTS="--http-port=$PORT --proxy=edge --cluster=local"
+SERVER_OPTS="--http-port=$PORT --http-enabled=true --proxy-headers=forwarded --hostname-strict=false"
 
 if [ "$DB_ARGS" != "" ]; then
   SERVER_OPTS="$SERVER_OPTS $DB_ARGS"
@@ -75,7 +76,7 @@ while [ "$#" -gt 0 ]; do
   config)
     RUN_CONFIG=true
     ;;
-  /opt/jboss/tools/docker-entrypoint.sh)
+  /opt/keycloak/bin/docker-entrypoint.sh)
     echo "Ignoring redundant entrypoint argument"
     ;;
   *)
@@ -95,17 +96,17 @@ if [[ "$RUN_CONFIG_START" == true ]]; then
     exit 2
   fi
 
-  CONFIG_MARKER_FILE="/opt/jboss/keycloak/config_marker"
+  CONFIG_MARKER_FILE="/opt/keycloak/config_marker"
 
   if [[ -n $CONFIG_ARGS && ! -f "$CONFIG_MARKER_FILE" ]]; then
-    exec /opt/jboss/keycloak/bin/kc.sh config $CONFIG_ARGS &
+    exec /opt/keycloak/bin/kc.sh config $CONFIG_ARGS &
     wait $!
     touch $CONFIG_MARKER_FILE
   fi
 
-  exec /opt/jboss/keycloak/bin/kc.sh $SERVER_OPTS
+  exec /opt/keycloak/bin/kc.sh start $SERVER_OPTS
 else
-  exec /opt/jboss/keycloak/bin/kc.sh $SERVER_OPTS $CONFIG_ARGS
+  exec /opt/keycloak/bin/kc.sh start $SERVER_OPTS $CONFIG_ARGS
 fi
 
 exit $?

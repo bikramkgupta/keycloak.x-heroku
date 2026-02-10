@@ -6,3 +6,7 @@
 *.iml
 out
 gen
+
+# Environment files
+.env.docker
+.env.remote

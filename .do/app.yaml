@@ -1,0 +1,29 @@
+name: keycloak-x-heroku
+region: syd1
+services:
+  - name: keycloak
+    github:
+      repo: bikramkgupta/keycloak.x-heroku
+      branch: app_platform
+      deploy_on_push: true
+    dockerfile_path: Dockerfile
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-1gb
+    envs:
+      - key: KC_BOOTSTRAP_ADMIN_USERNAME
+        scope: RUN_TIME
+        type: SECRET
+        value: ${KC_BOOTSTRAP_ADMIN_USERNAME}
+      - key: KC_BOOTSTRAP_ADMIN_PASSWORD
+        scope: RUN_TIME
+        type: SECRET
+        value: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+        value: ${DATABASE_URL}
+      - key: PORT
+        scope: RUN_TIME
+        type: GENERAL
+        value: "8080"
