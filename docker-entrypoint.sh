@@ -62,7 +62,7 @@ fi
 CONFIG_ARGS=""
 RUN_CONFIG_START=false
 RUN_CONFIG=false
-SERVER_OPTS="--http-port=$PORT --http-enabled=true --proxy-headers=forwarded --hostname-strict=false"
+SERVER_OPTS="--http-port=${PORT:-8080} --http-enabled=true --proxy-headers=forwarded --hostname-strict=false"
 
 if [ "$DB_ARGS" != "" ]; then
   SERVER_OPTS="$SERVER_OPTS $DB_ARGS"

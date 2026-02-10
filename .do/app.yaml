@@ -19,10 +19,6 @@ services:
         scope: RUN_TIME
         type: SECRET
         value: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-      - key: DATABASE_URL
-        scope: RUN_TIME
-        type: SECRET
-        value: ${DATABASE_URL}
       - key: PORT
         scope: RUN_TIME
         type: GENERAL
