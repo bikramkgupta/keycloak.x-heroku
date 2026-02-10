@@ -22,12 +22,12 @@
 - [x] B4. Push secrets to GitHub (admin creds, DO token, DB URL)
 - [x] B5. Create GitHub Actions deploy workflow
 - [x] B6. Create/validate .do/app.yaml
-- [x] B7. Deploy to App Platform (BLOCKED - container exits)
-- [ ] B8. Verify deployment (status, logs, endpoints)
+- [x] B7. Deploy to App Platform (Fixed circular env var references and health check config)
+- [x] B8. Verify deployment (status, logs, endpoints)
 - [x] B9. Update CLAUDE.md with deployment details
-- [ ] B10. Final verification
+- [x] B10. Final verification
 
-**PHASE_B: BLOCKED** - See BLOCKERS.md
+**PHASE_B: COMPLETE**
 
 ## Blockers
 (none)

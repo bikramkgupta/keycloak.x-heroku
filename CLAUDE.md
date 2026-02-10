@@ -47,10 +47,10 @@ Key components:
 ## Test Endpoints
 | Endpoint | Method | Expected Status | Expected Response | Notes |
 |---|---|---|---|---|
-| / | GET | 200 | Keycloak welcome page | Main landing page |
-| /auth | GET | 200/302 | Keycloak admin console | Admin interface |
-| /auth/realms/master | GET | 200 | JSON realm config | Master realm info |
-| /health | GET | 200 | Health check | If available |
+| / | GET | 302 | ✓ Redirect to login | Main landing page |
+| /admin | GET | 302 | ✓ Redirect to admin console | Admin interface |
+| /realms/master | GET | 200 | ✓ JSON realm config | Master realm info |
+| /admin/master/console/ | GET | 200 | ✓ Admin console | Admin interface |
 
 ## Expected Warnings
 - Database migration warnings during first startup
@@ -67,14 +67,15 @@ Key components:
 
 ## Remote Deployment
 - **App ID**: bd6db0f9-ac8a-42ad-989b-98d9c3ba62cc
-- **App URL**: Not available (deployment blocked)
+- **App URL**: https://keycloak-x-heroku-p5lxl.ondigitalocean.app
 - **Region**: syd1
-- **Status**: BLOCKED - Container exits with non-zero code
-- **Database**: PostgreSQL cluster configured, app firewall rule added
-- **GitHub Secrets**: All secrets (DO token, admin creds, DB URL) pushed successfully
+- **Status**: ACTIVE - Successfully deployed and running
+- **Database**: PostgreSQL cluster configured with dedicated database and user
+- **GitHub Secrets**: All secrets pushed successfully (DO token, admin creds, DB URL)
 - **GitHub Actions**: Deployment workflow created
-- **Last Deployment**: b59b17fe-00cc-434f-9fc1-2f03a3fa27c5 (failed)
-- **Issue**: Keycloak 26.5.2 container startup incompatible with custom entrypoint script
+- **Active Deployment**: 6e543707-06d6-4ac1-a954-3a6339ca9796
+- **Startup Time**: ~47 seconds
+- **Health Check**: Configured with 60s initial delay, 30s timeout to accommodate startup time
 
 ## Env Files
 - `.env.docker` — Local Docker testing variables

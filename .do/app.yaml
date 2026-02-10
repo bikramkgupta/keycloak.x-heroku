@@ -10,15 +10,25 @@ services:
     http_port: 8080
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-1gb
+    health_check:
+      initial_delay_seconds: 60
+      period_seconds: 30
+      timeout_seconds: 30
+      success_threshold: 1
+      failure_threshold: 5
     envs:
       - key: KC_BOOTSTRAP_ADMIN_USERNAME
         scope: RUN_TIME
         type: SECRET
-        value: ${KC_BOOTSTRAP_ADMIN_USERNAME}
+        value: admin
       - key: KC_BOOTSTRAP_ADMIN_PASSWORD
         scope: RUN_TIME
         type: SECRET
-        value: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
+        value: wJ5SqF4gYg7yzr8evMD3lEpl6d4=
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+        value: ${DATABASE_URL}
       - key: PORT
         scope: RUN_TIME
         type: GENERAL
