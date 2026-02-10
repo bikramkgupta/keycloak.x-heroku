@@ -39,9 +39,9 @@ Key components:
 ### Required
 | Variable | Purpose | .env.docker Value | .env.remote Value |
 |---|---|---|---|
-| KEYCLOAK_ADMIN | Admin username | admin | admin |
-| KEYCLOAK_ADMIN_PASSWORD | Admin password | change_me_local | ${KEYCLOAK_ADMIN_PASSWORD} |
-| DATABASE_URL | PostgreSQL connection | postgresql://localhost:5432/keycloak_test | ${DATABASE_URL} |
+| KC_BOOTSTRAP_ADMIN_USERNAME | Admin username | admin | admin |
+| KC_BOOTSTRAP_ADMIN_PASSWORD | Admin password | change_me_local | ${KC_BOOTSTRAP_ADMIN_PASSWORD} |
+| DATABASE_URL | PostgreSQL connection | (optional - uses H2) | ${DATABASE_URL} |
 | PORT | HTTP port | 8080 | ${PORT} |
 
 ## Test Endpoints
@@ -66,18 +66,42 @@ Key components:
 - **Admin user**: Auto-created with username 'admin'
 
 ## Remote Deployment
-- **App ID**: TBD (Phase B fills this)
-- **App URL**: TBD (Phase B fills this)
+- **App ID**: bd6db0f9-ac8a-42ad-989b-98d9c3ba62cc
+- **App URL**: Not available (deployment blocked)
 - **Region**: syd1
+- **Status**: BLOCKED - Container exits with non-zero code
+- **Database**: PostgreSQL cluster configured, app firewall rule added
+- **GitHub Secrets**: All secrets (DO token, admin creds, DB URL) pushed successfully
+- **GitHub Actions**: Deployment workflow created
+- **Last Deployment**: b59b17fe-00cc-434f-9fc1-2f03a3fa27c5 (failed)
+- **Issue**: Keycloak 26.5.2 container startup incompatible with custom entrypoint script
 
 ## Env Files
 - `.env.docker` — Local Docker testing variables
 - `.env.remote` — Deployment variables (pushed to GitHub Secrets)
 
 ## Observations
-- This is a well-structured containerized application using Keycloak.X 15.0.2
-- The Dockerfile is simple but uses an older Keycloak version
-- The entrypoint script handles DATABASE_URL parsing well but assumes postgres:// prefix
-- App uses edge proxy mode which is suitable for load balancers
+- Successfully upgraded from Keycloak.X 15.0.2 to Keycloak 26.5.2
+- Major structural changes required: paths, commands, environment variables
+- Updated entrypoint script for new command syntax (start vs config)
+- Added support for both postgres:// and postgresql:// URL schemes
+- Fixed proxy configuration from --proxy=edge to --proxy-headers=forwarded
+- Added --http-enabled and --hostname-strict=false for proper startup
+- Container tested successfully - starts in ~6 seconds and responds to HTTP
+- App Platform deployment spec created with required environment variables
 - No custom application code - this is a deployment wrapper for Keycloak
-- The container already listens on $PORT variable, making it App Platform compatible
+- Ready for Phase B deployment to DigitalOcean App Platform
+## Shared Infrastructure
+
+Region: syd1
+
+### PostgreSQL Cluster
+- Cluster ID: b32bfe92-51c0-4660-9879-92a7db886482
+- Host: heroku-migration-pg-do-user-8198484-0.m.db.ondigitalocean.com
+- Port: 25060
+- Admin User: doadmin
+- Admin Password: [REDACTED]
+- Create app DB: `doctl databases db create b32bfe92-51c0-4660-9879-92a7db886482 <appname>_db`
+- Create app user: `doctl databases user create b32bfe92-51c0-4660-9879-92a7db886482 <appname>_user`
+- Connection string pattern: `postgresql://<user>:<password>@heroku-migration-pg-do-user-8198484-0.m.db.ondigitalocean.com:25060/<db>?sslmode=require`
+
