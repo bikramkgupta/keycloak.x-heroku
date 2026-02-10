@@ -51,7 +51,7 @@ if [ "${DATABASE_URL:-}" != "" ]; then
 
     echo "DB_ADDR=$DB_ADDR, DB_PORT=$DB_PORT, DB_DATABASE=$DB_DATABASE, DB_USER=$DB_USER, DB_PASSWORD=$DB_PASSWORD"
 
-    export DB_ARGS="-Dkc.db.url.host=$DB_ADDR -Dkc.db.url.database=$DB_DATABASE --db-username=$DB_USER --db-password=$DB_PASSWORD"
+    export DB_ARGS="--db-url-host=$DB_ADDR --db-url-port=$DB_PORT --db-url-database=$DB_DATABASE --db-username=$DB_USER --db-password=$DB_PASSWORD"
   fi
 fi
 
